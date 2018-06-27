@@ -1,0 +1,16 @@
+import gym
+
+env = gym.make('FrozenLake-v0')
+
+for episode in range(5):
+	observation = env.reset()
+	for step in range(100):
+		env.render()
+		action = env.action_space.sample()
+		print(observation, action)
+		observation, reward, done, info = env.step(action)
+		if done:
+			print('Episode ', episode, 'finished after ', step
+, 'timesteps')
+			break
+
