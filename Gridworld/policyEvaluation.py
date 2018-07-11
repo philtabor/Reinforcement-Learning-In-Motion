@@ -4,6 +4,7 @@ def evaluatePolicy(grid, V, policy, GAMMA, THETA):
     # policy evaluation for the random choice in gridworld
     converged = False
     while not converged:
+        DELTA = 0
         for state in grid.stateSpace:
             oldV = V[state]
             total = 0
@@ -15,8 +16,6 @@ def evaluatePolicy(grid, V, policy, GAMMA, THETA):
                     if oldState == state and act == action:
                         total += weight*grid.p[key]*(reward+GAMMA*V[newState])
             V[state] = total
-            if np.abs(oldV-V[state]) < THETA:
-                converged = True
-            else:
-                converged = False
+            DELTA = max(DELTA, np.abs(oldV-V[state]))
+            converged = True if DELTA < THETA else False
     return V
