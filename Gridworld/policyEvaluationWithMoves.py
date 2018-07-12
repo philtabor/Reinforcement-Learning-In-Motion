@@ -16,5 +16,5 @@ def evaluatePolicy(grid, V, policy, GAMMA, THETA):
                 total += weight*grid.p[key]*(reward+GAMMA*V[newState])
             V[state] = total
             DELTA = max(DELTA, np.abs(oldV-V[state]))
-            converged = True if DELTA > THETA else False
+            converged = True if DELTA < THETA else False
     return V
