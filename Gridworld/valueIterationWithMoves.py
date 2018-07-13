@@ -24,12 +24,10 @@ def iterateValues(grid, V, policy, GAMMA, THETA):
         actionValues = []
         actions = []
         for action in grid.actionSpace:
-            total = 0
             grid.setState(state)
             newState, reward, _, _ = grid.step(action)
             key = (newState, reward, state, action)
-            total = grid.p[key]*(reward+GAMMA*V[newState])           
-            actionValues.append(total)
+            actionValues.append(grid.p[key]*(reward+GAMMA*V[newState]))
             actions.append(action)
         actionValues = np.array(actionValues)
         bestActionIDX = np.where(actionValues == actionValues.max())[0]
