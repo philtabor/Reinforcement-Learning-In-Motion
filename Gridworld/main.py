@@ -14,10 +14,16 @@ if __name__ == '__main__':
     for state in grid.stateSpacePlus:        
         V[state] = 0
     
+    # Initialize policy
     policy = {}
     for state in grid.stateSpace:
         policy[state] = [key for key in grid.actionSpace.keys()]    
     
+    # Initial policy evaluation
+    V = evaluatePolicy(grid, V, policy, GAMMA, THETA)
+    printV(V, grid)
+
+    # Iterative policy evaluation
     stable = False
     while not stable:
         V = evaluatePolicy(grid, V, policy, GAMMA, THETA)
@@ -26,14 +32,26 @@ if __name__ == '__main__':
     
     printV(V, grid)
     for state in policy:
-        print(state, policy[state])   
-    """
+        print(state, policy[state])       
+    print('\n---------------\n')
+    
+    # initialize V(s)
+    V = {}
+    for state in grid.stateSpacePlus:        
+        V[state] = 0
+    # Reinitialize policy
+    policy = {}
+    for state in grid.stateSpace:
+        policy[state] = [key for key in grid.actionSpace.keys()] 
+
+    # 2 round of value iteration ftw
     for i in range(2):
         V, policy = iterateValues(grid, V, policy, GAMMA, THETA)
     
+    printV(V, grid)
+    
     for state in policy:
         print(state, policy[state])
-    print()
-    """
+    print()   
 
     
