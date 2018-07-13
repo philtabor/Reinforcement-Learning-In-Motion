@@ -32,8 +32,9 @@ def iterateValues(grid, V, policy, GAMMA, THETA):
             actionValues.append(total)
             actions.append(action)
         actionValues = np.array(actionValues)
-        bestActionIDX = np.where(actionValues == actionValues.max())[0]
-        bestActions = [actions[item] for item in bestActionIDX]
+        bestActionIDX = np.where(actionValues == actionValues.max())[0]        
+        #bestActions = actions[np.random.choice(bestActionIDX)]
+        bestActions = actions[bestActionIDX[0]]
         policy[state] = bestActions
 
     return V, policy
