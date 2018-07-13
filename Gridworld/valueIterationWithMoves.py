@@ -4,6 +4,7 @@ from utils import printV
 def iterateValues(grid, V, policy, GAMMA, THETA):
     converged = False
     while not converged:
+        DELTA = 0
         for state in grid.stateSpace:
             oldV = V[state]
             newV = []            
@@ -16,7 +17,8 @@ def iterateValues(grid, V, policy, GAMMA, THETA):
             bestV = np.where(newV == newV.max())[0]
             bestState = np.random.choice(bestV)
             V[state] = newV[bestState]
-            converged = True if np.abs(oldV-V[state]) < THETA else False
+            DELTA = max(DELTA, np.abs(oldV-V[state]))
+            converged = True if DELTA < THETA else False
 
     for state in grid.stateSpace:
         actionValues = []
