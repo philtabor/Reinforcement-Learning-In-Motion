@@ -6,8 +6,7 @@ def iterateValues(grid, V, policy, GAMMA, THETA):
     while not converged:
         for state in grid.stateSpace:
             oldV = V[state]
-            newV = []
-            #weight = 1 / len(policy[state])
+            newV = []            
             for action in grid.actionSpace:
                 total = 0                
                 for key in grid.p:
