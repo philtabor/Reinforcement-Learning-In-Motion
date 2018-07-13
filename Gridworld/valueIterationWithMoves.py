@@ -8,7 +8,6 @@ def iterateValues(grid, V, policy, GAMMA, THETA):
             oldV = V[state]
             newV = []            
             for action in grid.actionSpace:
-                total = 0 
                 grid.setState(state)
                 newState, reward, _, _ = grid.step(action)
                 key = (newState, reward, state, action) 
