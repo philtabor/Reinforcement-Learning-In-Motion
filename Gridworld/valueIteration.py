@@ -12,8 +12,7 @@ def iterateValues(grid, V, policy, GAMMA, THETA):
                 for key in grid.p:
                     (newState, reward, oldState, act) = key
                     if state == oldState and action == act:
-                        total += grid.p[key]*(reward+GAMMA*V[newState])
-                newV.append(total)           
+                        newV.append(grid.p[key]*(reward+GAMMA*V[newState]))                          
             newV = np.array(newV)
             bestV = np.where(newV == newV.max())[0]
             bestState = np.random.choice(bestV)
