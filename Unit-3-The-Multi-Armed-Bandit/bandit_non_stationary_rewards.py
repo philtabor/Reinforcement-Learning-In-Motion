@@ -19,18 +19,18 @@ class Bandit(object):
             a = np.array([approx for approx in self.Q])
             whichArm = np.random.choice(np.where(a == a.max())[0]) 
         self.lastAction = whichArm
-       
-        self.trueRewards = [reward + 0.1*np.random.randn() for reward in self.trueRewards]       
+
+        self.trueRewards = [reward + 0.1*np.random.randn() for reward in self.trueRewards]
 
         return np.random.randn() + self.trueRewards[whichArm]
-    
+
     def updateMean(self, sample):
         whichArm = self.lastAction
         self.N[whichArm] += 1
         if self.mode == 'sample-average':
-            self.Q[whichArm] = self.Q[whichArm] + 1.0/self.N[whichArm]*(sample - self.Q[whichArm]) 
+            self.Q[whichArm] = self.Q[whichArm] + 1.0/self.N[whichArm]*(sample - self.Q[whichArm])
         elif self.mode == 'constant':
-            self.Q[whichArm] = self.Q[whichArm] + 0.1*(sample - self.Q[whichArm])         
+            self.Q[whichArm] = self.Q[whichArm] + 0.1*(sample - self.Q[whichArm])
 
 def simulate(numArms, epsilon, numPulls, mode):
     rewardHistory = np.zeros(numPulls)
@@ -38,8 +38,8 @@ def simulate(numArms, epsilon, numPulls, mode):
         if j % 100 == 0:
             print(j)
         rewards = [np.random.randn() for _ in range(numActions)]
-        bandit = Bandit(numArms, rewards, epsilon, mode)        
-        for i in range(numPulls):        
+        bandit = Bandit(numArms, rewards, epsilon, mode)
+        for i in range(numPulls):
             reward = bandit.pull()
             bandit.updateMean(reward)
             rewardHistory[i] += reward
@@ -47,7 +47,7 @@ def simulate(numArms, epsilon, numPulls, mode):
     return average
 
 if __name__ == '__main__':
-    numActions = 5   
+    numActions = 5
     run1 = simulate(numActions, epsilon=0.1, numPulls=10000, mode='sample-average')
     run2 = simulate(numActions, epsilon=0.1, numPulls=10000, mode='constant')
     plt.plot(run1, 'b--', run2, 'r--')
