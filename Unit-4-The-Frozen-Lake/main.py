@@ -58,6 +58,5 @@ if __name__ == '__main__':
         robot.updateV()
         episodeRewards.append(rewards)
     robot.printV()
-
     plt.plot(episodeRewards)
     plt.show()
