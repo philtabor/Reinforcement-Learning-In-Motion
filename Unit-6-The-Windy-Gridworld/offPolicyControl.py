@@ -5,7 +5,7 @@ import numpy as np
 if __name__ == '__main__':
     grid = WindyGrid(4,4, wind=0.0)
     GAMMA = 0.9
-    eps = 0.2
+    EPS = 0.2
 
     Q = {}
     C = {}
@@ -31,8 +31,8 @@ if __name__ == '__main__':
         steps = 0
         while not done:
             rand = np.random.random()
-            action = behaviorPolicy[state] if rand < (1-eps) else \
-                     sampleReducedActionSpace(grid, behaviorPolicy[state])
+            action = behaviorPolicy[observation] if rand < (1-EPS) else \
+                     sampleReducedActionSpace(grid, behaviorPolicy[observation])
             observation_, reward, done, info = grid.step(action)
             steps += 1             
             if steps > 100 and not done:
