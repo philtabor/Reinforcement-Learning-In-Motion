@@ -1,6 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
+
 class Bandit(object):
     def __init__(self, numArms, trueRewards, epsilon, initialQ, mode):
         self.Q = [initialQ for i in range(numArms)]
