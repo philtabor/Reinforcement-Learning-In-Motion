@@ -3,7 +3,7 @@ import numpy as np
 from utils import printV
 
 if __name__ == '__main__':
-    grid = WindyGrid(6,6, wind=wind=[0, 0, 1, 2, 1, 0])
+    grid = WindyGrid(6,6, wind=[0, 0, 1, 2, 1, 0])
     GAMMA = 0.9
 
     policy = {}
@@ -36,7 +36,6 @@ if __name__ == '__main__':
             if last:
                 last = False
             else:
-
                 if state not in statesVisited:
                     returns[state].append(G)                
                     V[state] = np.mean(returns[state])                
