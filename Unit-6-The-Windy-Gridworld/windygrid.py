@@ -5,14 +5,15 @@ class WindyGrid(object):
         self.grid = np.zeros((m,n))
         self.m = m
         self.n = n
-        self.stateSpace = [i for i in range(self.m*self.n-1)]
+        self.stateSpace = [i for i in range(self.m*self.n)]        
+        self.stateSpace.remove(28)        
         self.stateSpacePlus = [i for i in range(self.m*self.n)]
         self.actionSpace = {'U': -self.m, 'D': self.m, 
                             'L': -1, 'R': 1}
         self.possibleActions = ['U', 'D', 'L', 'R']
         self.reward = -1
         self.agentPosition = 0
-        self.windStrength = wind
+        self.wind = wind
 
     def isTerminalState(self, state):
         return state in self.stateSpacePlus and state not in self.stateSpace 
@@ -42,19 +43,18 @@ class WindyGrid(object):
             return False 
 
     def step(self, action):
-        agentX, _ = self.getAgentRowAndColumn()
-        rand = np.random.random()
-        if rand < agentX * self.windStrength:
-            actions = self.possibleActions[:] # do a deep, not shallow, copy
-            actions.remove(action)
-            action = np.random.choice(actions)
-        resultingState = self.agentPosition + self.actionSpace[action]
+        agentX, agentY = self.getAgentRowAndColumn()
+        if agentX > 0:
+            resultingState = self.agentPosition + self.actionSpace[action] + \
+                            self.wind[agentY] * self.actionSpace['U']
+        else:
+            resultingState = self.agentPosition + self.actionSpace[action]
         reward = -1 if not self.isTerminalState(resultingState) else 0
         if not self.offGridMove(resultingState, self.agentPosition):
             self.setState(resultingState)
             return resultingState, reward, self.isTerminalState(resultingState), action
         else:
-            return self.agentPosition, reward, self.isTerminalState(self.agentPosition), action
+            return self.agentPosition, reward, self.isTerminalState(self.agentPosition), None
 
     def reset(self):
         self.agentPosition = 0
