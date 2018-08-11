@@ -61,6 +61,7 @@ class WindyGrid(object):
 
     def reset(self):
         self.agentPosition = 0
+        self.grid = np.zeros((self.m,self.n))
         return self.agentPosition, False
 
     def render(self):
