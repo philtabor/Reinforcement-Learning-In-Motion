@@ -3,12 +3,12 @@ import numpy as np
 from utils import printV
 
 if __name__ == '__main__':
-    grid = WindyGrid(6,6, wind=0.1)
+    grid = WindyGrid(6,6, wind=wind=[0, 0, 1, 2, 1, 0])
     GAMMA = 0.9
 
     policy = {}
     for state in grid.stateSpace:
-        policy[state] = [key for key in grid.actionSpace.keys()]
+        policy[state] = grid.possibleActions
 
     V = {}
     for state in grid.stateSpacePlus:
