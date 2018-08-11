@@ -3,37 +3,40 @@ from utils import printPolicy, printQ
 import numpy as np
  
 if __name__ == '__main__':
-    grid = WindyGrid(6,6, wind=0.0)
+    grid = WindyGrid(6,6, wind=[0, 0, 1, 2, 1, 0])
     GAMMA = 0.9
 
     Q = {}
     returns = {}
+    pairsVisited = {}
     for state in grid.stateSpacePlus:
-        for action in grid.actionSpace.keys():
+        for action in grid.possibleActions:
             Q[(state, action)] = 0
-            returns[(state,action)] = []
+            returns[(state,action)] = 0
+            pairsVisited[(state,action)] = 0
 
     policy = {}
     for state in grid.stateSpace:
-        policy[state] = grid.possibleActions
-
-    for i in range(10000):
-        if i % 1000 == 0:
+        policy[state] = np.random.choice(grid.possibleActions)
+    
+    for i in range(1000000):
+        if i % 50000 == 0:
             print('starting episode', i)   
         observation = np.random.choice(grid.stateSpace)
-        action = np.random.choice(grid.possibleActions)   
+        action = np.random.choice(grid.possibleActions)
         grid.setState(observation)
         observation_, reward, done, info = grid.step(action)
         memory = [(observation, action, reward)]
         steps = 0
         while not done:
-            action = np.random.choice(policy[observation_])
-            steps += 1                
-            observation_, reward, done, info = grid.step(action)
-            if steps > 100 and not done:
+            action = policy[observation_]
+            steps += 1            
+            observation, reward, done, info = grid.step(action)
+            if steps > 50 and not done:
                 done = True
-                reward = -100                       
-            memory.append((observation_, info, reward))
+                reward = -steps
+            memory.append((observation_, action, reward))
+            observation_ = observation
 
         G = 0
         statesAndActions = []
@@ -42,15 +45,14 @@ if __name__ == '__main__':
             G = GAMMA*G + reward
             if last:
                 last = False
-            else:                 
+            else:
                 if (state, action) not in statesAndActions:
-                    returns[(state,action)].append(G)             
-                    Q[(state,action)] = np.round(np.mean(returns[state,action]),2)                
+                    pairsVisited[(state,action)] += 1
+                    returns[(state,action)] += (1 / pairsVisited[(state,action)])*(G-returns[(state,action)])                   
+                    Q[(state,action)] = returns[(state,action)]
                     statesAndActions.append((state,action))
-        for state in grid.stateSpace:
-            values = np.array([Q[(state,a)] for a in grid.possibleActions])                
-            best = np.where(values == values.max())[0]
-            policy[state] = [grid.possibleActions[k] for k in best]
-
+                    values = np.array([Q[(state,a)] for a in grid.possibleActions])
+                    best = np.argmax(values)
+                    policy[state] = grid.possibleActions[best]
     printQ(Q, grid)
-    printPolicy(policy,grid)
+    printPolicy(policy,grid)    
