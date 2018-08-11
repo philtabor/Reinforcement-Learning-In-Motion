@@ -1,7 +1,6 @@
 import numpy as np
 import gym
 import matplotlib.pyplot as plt 
-from utils import printPolicy, printQ
 
 def sampleReducedActionSpace(actionSpace, action):
     actions = actionSpace[:]
