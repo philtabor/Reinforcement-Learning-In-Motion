@@ -11,7 +11,6 @@ class WindyGrid(object):
         self.actionSpace = {'U': -self.m, 'D': self.m, 
                             'L': -1, 'R': 1}
         self.possibleActions = ['U', 'D', 'L', 'R']
-        self.reward = -1
         self.agentPosition = 0
         self.wind = wind
 
