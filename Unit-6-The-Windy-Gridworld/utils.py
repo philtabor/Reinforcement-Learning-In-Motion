@@ -11,10 +11,11 @@ def printPolicy(policy, grid):
     for idx, row in enumerate(grid.grid):
         for idy, _ in enumerate(row):            
             state = grid.m * idx + idy 
-            if state != grid.m * grid.n - 1:
-                print(policy[state], end='\t')
+            if state in grid.stateSpace:
+                string = ''.join(policy[state])
+                print(string, end='\t')
             else:
-                print('\t')
+                print('', end='\t')
         print('\n')
     print('--------------------')    
 
@@ -23,7 +24,7 @@ def printQ(Q, grid):
         for idy, _ in enumerate(row):            
             state = grid.m * idx + idy            
             if state != grid.m * grid.n - 1:
-                vals = [np.round(Q[state,action], 3) for action in grid.possibleActions]
+                vals = [np.round(Q[state,action], 5) for action in grid.possibleActions]
                 print(vals, end='\t')
         print('\n')
     print('--------------------')
