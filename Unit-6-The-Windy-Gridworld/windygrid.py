@@ -47,7 +47,11 @@ class WindyGrid(object):
             resultingState = self.agentPosition + self.actionSpace[action] + \
                             self.wind[agentY] * self.actionSpace['U']
         else:
-            resultingState = self.agentPosition + self.actionSpace[action]
+            if action == 'L' or action == 'R':
+                resultingState = self.agentPosition + self.actionSpace[action]
+            else:
+                resultingState = self.agentPosition + self.actionSpace[action] + \
+                            self.wind[agentY] * self.actionSpace['U']                
         reward = -1 if not self.isTerminalState(resultingState) else 0
         if not self.offGridMove(resultingState, self.agentPosition):
             self.setState(resultingState)
