@@ -55,10 +55,10 @@ class WindyGrid(object):
         reward = -1 if not self.isTerminalState(resultingState) else 0
         if not self.offGridMove(resultingState, self.agentPosition):
             self.setState(resultingState)
-            return resultingState, reward, self.isTerminalState(resultingState), action
+            return resultingState, reward, self.isTerminalState(resultingState), None
         else:
             return self.agentPosition, reward, self.isTerminalState(self.agentPosition), None
-
+ 
     def reset(self):
         self.agentPosition = 0
         self.grid = np.zeros((self.m,self.n))
