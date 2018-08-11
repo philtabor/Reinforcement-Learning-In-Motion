@@ -3,13 +3,13 @@ from utils import printPolicy, printQ, sampleReducedActionSpace
 import numpy as np
 
 if __name__ == '__main__':
-    grid = WindyGrid(4,4, wind=0.0)
+    grid = WindyGrid(6,6, wind=[0, 0, 1, 2, 1, 0])
     GAMMA = 0.9
-    EPS = 0.2
+    EPS = 0.1
 
     Q = {}
     C = {}
-    for state in grid.stateSpace:
+    for state in grid.stateSpacePlus:
         for action in grid.possibleActions:
             Q[(state,action)] = 0
             C[(state,action)] = 0
@@ -20,24 +20,22 @@ if __name__ == '__main__':
         argmax = np.argmax(vals)
         targetPolicy[state] = grid.possibleActions[argmax]
 
-    for i in range(100000):
-        if i % 10000 == 0:
-            print(i)            
+    for i in range(1000000):
+        if i % 50000 == 0:
+            print('starting episode', i)            
         behaviorPolicy = {}
         for state in grid.stateSpace:
-            behaviorPolicy[state] = np.random.choice(grid.possibleActions)
+            behaviorPolicy[state] = grid.possibleActions
         memory = []
         observation, done = grid.reset()
         steps = 0
         while not done:
-            rand = np.random.random()
-            action = behaviorPolicy[observation] if rand < (1-EPS) else \
-                     sampleReducedActionSpace(grid, behaviorPolicy[observation])
+            action = np.random.choice(behaviorPolicy[state])
             observation_, reward, done, info = grid.step(action)
             steps += 1             
             if steps > 100 and not done:
                 done = True
-                reward -= steps                                   
+                reward = -steps                                   
             memory.append((observation, action, reward))
             observation = observation_
 
@@ -49,9 +47,9 @@ if __name__ == '__main__':
             if last:
                 last = False
             else:
-                C[state,action] += W
-                Q[state,action] += (W / C[state,action])*(G-Q[state,action])
-                vals = np.array([Q[state, a] for a in grid.possibleActions])
+                C[(state,action)] += W
+                Q[(state,action)] += (W / C[(state,action)])*(G-Q[(state,action)])
+                vals = np.array([Q[(state, a)] for a in grid.possibleActions])
                 argmax = np.argmax(vals)
                 targetPolicy[state] = grid.possibleActions[argmax]                
                 if action != targetPolicy[state]:
