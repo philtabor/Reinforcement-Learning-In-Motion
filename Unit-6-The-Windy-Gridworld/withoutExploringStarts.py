@@ -1,5 +1,5 @@
 from windygrid import WindyGrid
-from utils import printPolicy, printQ
+from utils import printPolicy, printQ, sampleReducedActionSpace
 import numpy as np
 
 if __name__ == '__main__':
@@ -50,12 +50,13 @@ if __name__ == '__main__':
                     returns[(state,action)] += (1 / pairsVisited[(state,action)])*(G-returns[(state,action)])                   
                     Q[(state,action)] = returns[(state,action)]
                     statesAndActions.append((state,action))
+                    values = np.array([Q[(state,a)] for a in grid.possibleActions])
+                    best = np.random.choice(np.where(values==values.max())[0])                    
                     rand = np.random.random()
                     if rand < 1 - EPS:
-                        values = np.array([Q[(state,a)] for a in grid.possibleActions])
-                        best = np.random.choice(np.where(values==values.max())[0])
                         policy[state] = grid.possibleActions[best]
                     else:
+                        action = sampleReducedActionSpace(grid, grid.possibleActions[best])
                         policy[state] = np.random.choice(grid.possibleActions)
     printQ(Q, grid)
     printPolicy(policy,grid)
