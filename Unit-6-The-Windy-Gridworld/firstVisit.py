@@ -18,9 +18,11 @@ if __name__ == '__main__':
     for state in grid.stateSpace:
         returns[state] = []
 
-    for i in range(500):        
+    for i in range(1000):        
         observation, done = grid.reset()
         memory = []
+        if i % 50 == 0:
+            print('starting episode', i)
         while not done:
             # attempt to follow the policy
             action = np.random.choice(policy[observation])            
@@ -39,6 +41,6 @@ if __name__ == '__main__':
                 if state not in statesVisited:
                     returns[state].append(G)                
                     V[state] = np.mean(returns[state])                
-                statesVisited.append(state)
-    
+                    statesVisited.append(state)
+
     printV(V, grid)
