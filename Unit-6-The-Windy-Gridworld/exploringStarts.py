@@ -27,7 +27,7 @@ if __name__ == '__main__':
         grid.setState(observation)
         observation_, reward, done, info = grid.step(action)
         memory = [(observation, action, reward)]
-        steps = 0
+        steps = 1
         while not done:
             action = policy[observation_]
             steps += 1            
