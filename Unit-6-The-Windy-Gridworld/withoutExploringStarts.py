@@ -5,7 +5,7 @@ import numpy as np
 if __name__ == '__main__':
     grid = WindyGrid(6,6, wind=[0, 0, 1, 2, 1, 0])
     GAMMA = 0.9
-    EPS = 0.1
+    EPS = 0.01
 
     Q = {}
     returns = {}
@@ -18,30 +18,34 @@ if __name__ == '__main__':
 
     policy = {}
     for state in grid.stateSpace:
-        policy[state] = np.random.choice(grid.possibleActions)
+        policy[state] = grid.possibleActions
 
-    for i in range(100000):
+    for i in range(200000):
         if i % 5000 == 0:
             print('starting episode', i)   
         observation, done = grid.reset()       
         memory = []
         steps = 0
-        while not done:
-            rand = np.random.random()            
-            action = policy[observation]
+        while not done:       
+            if len(policy[observation]) > 1:
+                action = np.random.choice(policy[observation])
+            else:
+                action = policy[observation]
             observation_, reward, done, info = grid.step(action)
             steps += 1
-            if steps > 50 and not done:
+            if steps > 25 and not done:
                 done = True
                 reward = -steps
             memory.append((observation, action, reward))
             observation = observation_
 
+        #append the terminal state
+        memory.append((observation, action, reward))
+
         G = 0
         statesAndActions = []
         last = True # start at t = T - 1
-        for state, action, reward in reversed(memory):                        
-            G = GAMMA*G + reward
+        for state, action, reward in reversed(memory):                                    
             if last:
                 last = False
             else:                
@@ -55,8 +59,8 @@ if __name__ == '__main__':
                     rand = np.random.random()
                     if rand < 1 - EPS:
                         policy[state] = grid.possibleActions[best]
-                    else:
-                        action = sampleReducedActionSpace(grid, grid.possibleActions[best])
+                    else:                        
                         policy[state] = np.random.choice(grid.possibleActions)
+            G = GAMMA*G + reward        
     printQ(Q, grid)
     printPolicy(policy,grid)
