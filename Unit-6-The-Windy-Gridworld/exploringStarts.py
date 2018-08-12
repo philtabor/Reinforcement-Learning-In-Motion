@@ -20,7 +20,7 @@ if __name__ == '__main__':
         policy[state] = np.random.choice(grid.possibleActions)
     
     for i in range(1000000):
-        if i % 50000 == 0:
+        if i % 100000 == 0:
             print('starting episode', i)   
         observation = np.random.choice(grid.stateSpace)
         action = np.random.choice(grid.possibleActions)
@@ -32,21 +32,23 @@ if __name__ == '__main__':
             action = policy[observation_]
             steps += 1            
             observation, reward, done, info = grid.step(action)
-            if steps > 50 and not done:
+            if steps > 15 and not done:
                 done = True
                 reward = -steps
             memory.append((observation_, action, reward))
             observation_ = observation
 
+        # append the terminal state
+        memory.append((observation_, action, reward))
+        
         G = 0
         statesAndActions = []
         last = True # start at t = T - 1
-        for state, action, reward in reversed(memory):
-            G = GAMMA*G + reward
+        for state, action, reward in reversed(memory):            
             if last:
-                last = False
+                last = False  
             else:
-                if (state, action) not in statesAndActions:
+                if (state, action) not in statesAndActions:                                    
                     pairsVisited[(state,action)] += 1
                     returns[(state,action)] += (1 / pairsVisited[(state,action)])*(G-returns[(state,action)])                   
                     Q[(state,action)] = returns[(state,action)]
@@ -54,5 +56,6 @@ if __name__ == '__main__':
                     values = np.array([Q[(state,a)] for a in grid.possibleActions])
                     best = np.argmax(values)
                     policy[state] = grid.possibleActions[best]
+            G = GAMMA*G + reward                    
     printQ(Q, grid)
     printPolicy(policy,grid)    
