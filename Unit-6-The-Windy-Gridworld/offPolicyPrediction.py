@@ -3,12 +3,12 @@ from utils import printPolicy, printQ, sampleReducedActionSpace
 import numpy as np
 
 if __name__ == '__main__':
-    grid = WindyGrid(6,6, wind=0.1)
+    grid = WindyGrid(6,6, wind=[0,0,1,2,1,0])
     GAMMA = 0.9
 
     Q = {}
     C = {}
-    for state in grid.stateSpace:
+    for state in grid.stateSpacePlus:
         for action in grid.possibleActions:
             Q[(state,action)] = 0
             C[(state,action)] = 0
@@ -31,9 +31,9 @@ if __name__ == '__main__':
             action = np.random.choice(behaviorPolicy[observation])
             observation_, reward, done, info = grid.step(action)
             steps += 1
-            if steps > 100:
+            if steps > 25:
                 done = True
-                reward -= 100
+                reward = -steps
             memory.append((observation, action, reward))
             observation = observation_
 
@@ -41,7 +41,7 @@ if __name__ == '__main__':
         W = 1
         last = True
         for (state, action, reward) in reversed(memory):
-            G = GAMMA*G + reward
+            
             if last:
                 last = False
             else:
@@ -50,4 +50,5 @@ if __name__ == '__main__':
                 W *= len(targetPolicy[state])/len(behaviorPolicy[state])
                 if W == 0:
                     break
+            G = GAMMA*G + reward
     printQ(Q, grid)
