@@ -20,12 +20,16 @@ if __name__ == '__main__':
         argmax = np.argmax(vals)
         targetPolicy[state] = grid.possibleActions[argmax]
 
-    for i in range(1000000):
-        if i % 50000 == 0:
-            print('starting episode', i)            
+    for i in range(3000000):
+        if i % 100000 == 0:
+            print('starting episode', i)                      
         behaviorPolicy = {}
         for state in grid.stateSpace:
-            behaviorPolicy[state] = grid.possibleActions
+            rand = np.random.random()
+            if rand < 1 - EPS:
+                behaviorPolicy[state] = [targetPolicy[state]]
+            else:
+                behaviorPolicy[state] = grid.possibleActions
         memory = []
         observation, done = grid.reset()
         steps = 0
@@ -33,17 +37,17 @@ if __name__ == '__main__':
             action = np.random.choice(behaviorPolicy[state])
             observation_, reward, done, info = grid.step(action)
             steps += 1             
-            if steps > 100 and not done:
+            if steps > 25 and not done:
                 done = True
                 reward = -steps                                   
             memory.append((observation, action, reward))
             observation = observation_
 
+        memory.append((observation, action, reward))
         G = 0
         W = 1
         last = True
-        for (state, action, reward) in reversed(memory):
-            G = GAMMA*G + reward
+        for (state, action, reward) in reversed(memory):            
             if last:
                 last = False
             else:
@@ -53,7 +57,12 @@ if __name__ == '__main__':
                 argmax = np.argmax(vals)
                 targetPolicy[state] = grid.possibleActions[argmax]                
                 if action != targetPolicy[state]:
-                    break                
-                W *= 1/len(behaviorPolicy[state])
-    printQ(Q, grid)
+                    break
+                if len(behaviorPolicy[state]) == 1:
+                    prob = 1 - EPS
+                else:
+                    prob = EPS / len(behaviorPolicy[state])             
+                W *= 1/prob
+            G = GAMMA*G + reward
+
     printPolicy(targetPolicy, grid)
