@@ -14,13 +14,15 @@ if __name__ == '__main__':
             Q[(state, action)] = 0
             returns[(state,action)] = 0
             pairsVisited[(state,action)] = 0
-
+    
+    
     policy = {}
     for state in grid.stateSpace:
         policy[state] = np.random.choice(grid.possibleActions)
     
     for i in range(1000000):
-        if i % 100000 == 0:
+        statesActionsReturns = []
+        if i % 50000 == 0:
             print('starting episode', i)   
         observation = np.random.choice(grid.stateSpace)
         action = np.random.choice(grid.possibleActions)
@@ -30,7 +32,7 @@ if __name__ == '__main__':
         steps = 1
         while not done:
             action = policy[observation_]
-            steps += 1            
+            steps += 1
             observation, reward, done, info = grid.step(action)
             if steps > 15 and not done:
                 done = True
@@ -41,21 +43,26 @@ if __name__ == '__main__':
         # append the terminal state
         memory.append((observation_, action, reward))
         
-        G = 0
-        statesAndActions = []
+        G = 0        
         last = True # start at t = T - 1
-        for state, action, reward in reversed(memory):            
+        for state, action, reward in reversed(memory):
             if last:
                 last = False  
             else:
-                if (state, action) not in statesAndActions:                                    
-                    pairsVisited[(state,action)] += 1
-                    returns[(state,action)] += (1 / pairsVisited[(state,action)])*(G-returns[(state,action)])                   
-                    Q[(state,action)] = returns[(state,action)]
-                    statesAndActions.append((state,action))
-                    values = np.array([Q[(state,a)] for a in grid.possibleActions])
-                    best = np.argmax(values)
-                    policy[state] = grid.possibleActions[best]
-            G = GAMMA*G + reward                    
+                statesActionsReturns.append((state,action, G))
+            G = GAMMA*G + reward
+
+        statesActionsReturns.reverse()
+        statesAndActions = []
+        for state, action, G in statesActionsReturns:
+            if (state, action) not in statesAndActions:
+                pairsVisited[(state,action)] += 1
+                returns[(state,action)] += (1 / pairsVisited[(state,action)])*(G-returns[(state,action)])                   
+                Q[(state,action)] = returns[(state,action)]
+                statesAndActions.append((state,action))
+                values = np.array([Q[(state,a)] for a in grid.possibleActions])
+                best = np.argmax(values)
+                policy[state] = grid.possibleActions[best]
+            
     printQ(Q, grid)
-    printPolicy(policy,grid)    
+    printPolicy(policy,grid)
