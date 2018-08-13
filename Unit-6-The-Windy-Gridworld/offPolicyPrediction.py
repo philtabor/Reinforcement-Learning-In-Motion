@@ -22,8 +22,7 @@ if __name__ == '__main__':
             print(i)            
         behaviorPolicy = {}
         for state in grid.stateSpace:
-            behaviorPolicy[state] = [targetPolicy[state], 
-                                    sampleReducedActionSpace(grid, targetPolicy[state])]
+            behaviorPolicy[state] = grid.possibleActions
         memory = []
         observation, done = grid.reset()
         steps = 0
