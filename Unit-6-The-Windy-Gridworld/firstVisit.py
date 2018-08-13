@@ -14,13 +14,15 @@ if __name__ == '__main__':
     for state in grid.stateSpacePlus:
         V[state] = 0
 
+    
     returns = {}
     for state in grid.stateSpace:
         returns[state] = []
-
-    for i in range(1000):        
+    
+    for i in range(500):        
         observation, done = grid.reset()
         memory = []
+        statesReturns = []
         if i % 50 == 0:
             print('starting episode', i)
         while not done:
@@ -31,16 +33,20 @@ if __name__ == '__main__':
             observation = observation_
         
         G = 0
-        statesVisited = []
+        
         last = True
-        for state, action, reward in reversed(memory):
-            G = GAMMA*G + reward            
+        for state, action, reward in reversed(memory): 
             if last:
                 last = False
             else:
-                if state not in statesVisited:
-                    returns[state].append(G)                
-                    V[state] = np.mean(returns[state])                
-                    statesVisited.append(state)
+                statesReturns.append((state,G))
+            G = GAMMA*G + reward
 
+        statesReturns.reverse()
+        statesVisited = []
+        for state, G in statesReturns:
+            if state not in statesVisited:
+                returns[state].append(G)
+                V[state] = np.mean(returns[state])
+                statesVisited.append(state)
     printV(V, grid)
