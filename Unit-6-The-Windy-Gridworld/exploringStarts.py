@@ -20,10 +20,10 @@ if __name__ == '__main__':
     for state in grid.stateSpace:
         policy[state] = np.random.choice(grid.possibleActions)
     
-    for i in range(1000000):
-        statesActionsReturns = []
+    for i in range(1000000):        
         if i % 50000 == 0:
-            print('starting episode', i)   
+            print('starting episode', i)
+        statesActionsReturns = []
         observation = np.random.choice(grid.stateSpace)
         action = np.random.choice(grid.possibleActions)
         grid.setState(observation)
