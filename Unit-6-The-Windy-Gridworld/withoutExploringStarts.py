@@ -23,7 +23,7 @@ if __name__ == '__main__':
     for i in range(1000000):
         statesActionsReturns = []
         if i % 100000 == 0:
-            print('starting episode', i)   
+            print('starting episode', i)
         observation, done = grid.reset()       
         memory = []
         steps = 0
@@ -68,7 +68,5 @@ if __name__ == '__main__':
                 else:                        
                     policy[state] = np.random.choice(grid.possibleActions)
 
-    for row in pairsVisited:
-        print(row, pairsVisited[row])
     printQ(Q, grid)
     printPolicy(policy,grid)
