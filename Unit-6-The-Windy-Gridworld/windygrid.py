@@ -46,13 +46,16 @@ class WindyGrid(object):
         if agentX > 0:
             resultingState = self.agentPosition + self.actionSpace[action] + \
                             self.wind[agentY] * self.actionSpace['U']
+            if resultingState < 0: #if the wind is trying to push agent off grid
+                resultingState += self.m
         else:
             if action == 'L' or action == 'R':
                 resultingState = self.agentPosition + self.actionSpace[action]
             else:
                 resultingState = self.agentPosition + self.actionSpace[action] + \
-                            self.wind[agentY] * self.actionSpace['U']                
-        reward = -1 if not self.isTerminalState(resultingState) else 0
+                            self.wind[agentY] * self.actionSpace['U']
+        #reward = -1 if not self.isTerminalState(resultingState) else 0
+        reward = -1
         if not self.offGridMove(resultingState, self.agentPosition):
             self.setState(resultingState)
             return resultingState, reward, self.isTerminalState(resultingState), None
@@ -74,3 +77,4 @@ class WindyGrid(object):
                     print('X', end='\t')
             print('\n')
         print('------------------------------------------')
+        
