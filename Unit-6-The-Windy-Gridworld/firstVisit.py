@@ -31,9 +31,10 @@ if __name__ == '__main__':
             observation_, reward, done, info = grid.step(action)
             memory.append((observation, action, reward))
             observation = observation_
-        
-        G = 0
-        
+        # append terminal state
+        memory.append((observation, action, reward))
+
+        G = 0        
         last = True
         for state, action, reward in reversed(memory): 
             if last:
