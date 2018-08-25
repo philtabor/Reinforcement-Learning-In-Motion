@@ -35,18 +35,19 @@ if __name__ == '__main__':
                 reward = -steps
             memory.append((observation, action, reward))
             observation = observation_
-
+        memory.append((observation, action, reward))
+        
         G = 0
         W = 1
         last = True
-        for (state, action, reward) in reversed(memory):
-            
+        for (state, action, reward) in reversed(memory):            
             if last:
                 last = False
             else:
                 C[state,action] += W
                 Q[state,action] += (W / C[state,action])*(G-Q[state,action])
-                W *= len(targetPolicy[state])/len(behaviorPolicy[state])
+                prob = 1 if action in targetPolicy[state] else 0
+                W *= prob/(1/len(behaviorPolicy[state]))
                 if W == 0:
                     break
             G = GAMMA*G + reward
