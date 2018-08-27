@@ -20,8 +20,7 @@ if __name__ == '__main__':
     for i in range(1000):
         # cart x position, cart velocity, pole theta, pole velocity
         observation = env.reset()
-        done = False
-        epRewards = 0    
+        done = False  
         while not done:      
             s = int(np.digitize(observation[2], states))
             a = SimplePolicy(s)            
