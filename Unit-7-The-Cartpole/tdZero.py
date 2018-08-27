@@ -16,8 +16,8 @@ if __name__ == '__main__':
     V = {}
     for state in range(len(states)+1):
         V[state] = 0
-
-        for i in range(1000):
+    
+    for i in range(1000):
         # cart x position, cart velocity, pole theta, pole velocity
         observation = env.reset()
         done = False
@@ -25,7 +25,7 @@ if __name__ == '__main__':
         while not done:      
             s = int(np.digitize(observation[2], states))
             a = SimplePolicy(s)            
-            observation_, reward, done, info = env.step(a)            
+            observation_, reward, done, info = env.step(a)
             s_ = int(np.digitize(observation_[2], states))            
             V[s] = V[s] + ALPHA*(reward + GAMMA*V[s_] - V[s])
             observation = observation_
