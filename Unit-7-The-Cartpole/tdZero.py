@@ -9,7 +9,7 @@ def SimplePolicy(state):
 if __name__ == '__main__':
     env = gym.make('CartPole-v0')
     ALPHA = 0.1
-    GAMMA = 0.9
+    GAMMA = 1.0
 
     #discretize the space
     states = np.linspace(-0.20943951, 0.20943951, 10)
@@ -29,9 +29,8 @@ if __name__ == '__main__':
             a = SimplePolicy(s)            
             observation_, reward, done, info = env.step(a)
             epRewards += reward
-            s_ = int(np.digitize(observation_[2], states))
-            if s in range(1,11) and s_ in range(1,11):
-                V[s] = V[s] + ALPHA*(reward + GAMMA*V[s_] - V[s])
+            s_ = int(np.digitize(observation_[2], states))            
+            V[s] = V[s] + ALPHA*(reward + GAMMA*V[s_] - V[s])
             observation = observation_
         totalRewards.append(epRewards)
     
