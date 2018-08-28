@@ -38,9 +38,9 @@ if __name__ == '__main__':
                     states.append((i,j,k,l))
     
     Q = {}
-    for s in states:
-        for a in range(2):
-            Q[s, a] = 0
+    for state in states:
+        for action in range(2):
+            Q[state, action] = 0
 
     numGames = 50000
     totalRewards = np.zeros(numGames)
@@ -51,14 +51,14 @@ if __name__ == '__main__':
         epRewards = 0
         observation = env.reset()
         while not done:
-            s = getState(observation)
+            state = getState(observation)
             rand = np.random.random()
-            a = maxAction(Q,s) if rand < (1-EPS) else env.action_space.sample()
-            observation_, reward, done, info = env.step(a)
+            action = maxAction(Q,state) if rand < (1-EPS) else env.action_space.sample()
+            observation_, reward, done, info = env.step(action)
             epRewards += reward
-            s_ = getState(observation_)
-            a_ = maxAction(Q,s_)
-            Q[s,a] = Q[s,a] + ALPHA*(reward + GAMMA*Q[s_,a_] - Q[s,a])
+            state_ = getState(observation_)
+            action_ = maxAction(Q,state_)
+            Q[state,action] = Q[state,action] + ALPHA*(reward + GAMMA*Q[state_,action_] - Q[state,action])
             observation = observation_
         EPS -= 2/(numGames) if EPS > 0 else 0
         totalRewards[i] = epRewards     
