@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
+from util import plotRunningAverage
 import gym
 
 def maxAction(Q, state):    
@@ -26,7 +26,7 @@ if __name__ == '__main__':
     env = gym.make('CartPole-v0')
     # model hyperparameters
     ALPHA = 0.1
-    GAMMA = 0.9    
+    GAMMA = 1.0  
     EPS = 1.0
 
     #construct state space
@@ -63,5 +63,4 @@ if __name__ == '__main__':
         EPS -= 2/(numGames) if EPS > 0 else 0
         totalRewards[i] = epRewards     
     
-    plt.plot(totalRewards, 'b--')
-    plt.show()
+    plotRunningAverage(totalRewards)
