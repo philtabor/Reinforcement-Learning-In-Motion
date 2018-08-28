@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
+from util import plotRunningAverage
 import gym
 
 def maxAction(Q, state):    
@@ -26,7 +26,7 @@ if __name__ == '__main__':
     env = gym.make('CartPole-v0')
     # model hyperparameters
     ALPHA = 0.1
-    GAMMA = 0.9    
+    GAMMA = 1.0    
     EPS = 1.0
 
     #construct state space
@@ -38,9 +38,9 @@ if __name__ == '__main__':
                     states.append((i,j,k,l))
 
     Q = {}
-    for s in states:
-        for a in range(2):
-            Q[s, a] = 0
+    for state in states:
+        for action in range(2):
+            Q[state, action] = 0
 
     numGames = 50000
     totalRewards = np.zeros(numGames)
@@ -49,21 +49,20 @@ if __name__ == '__main__':
             print('starting game', i)
         # cart x position, cart velocity, pole theta, pole velocity
         observation = env.reset()        
-        s = getState(observation)
+        state = getState(observation)
         rand = np.random.random()
-        a = maxAction(Q, s) if rand < (1-EPS) else env.action_space.sample()
+        action = maxAction(Q, state) if rand < (1-EPS) else env.action_space.sample()
         done = False
         epRewards = 0
         while not done:
-            observation_, reward, done, info = env.step(a)   
-            s_ = getState(observation_)
-            rand = np.random.random()
-            a_ = maxAction(Q, s_) if rand < (1-EPS) else env.action_space.sample()
+            observation_, reward, done, info = env.step(action)
             epRewards += reward
-            Q[s,a] = Q[s,a] + ALPHA*(reward + GAMMA*Q[s_,a_] - Q[s,a])
-            s, a = s_, a_            
+            state_ = getState(observation_)
+            rand = np.random.random()
+            action_ = maxAction(Q, state_) if rand < (1-EPS) else env.action_space.sample()            
+            Q[state,action] = Q[state,action] + ALPHA*(reward + GAMMA*Q[state_,action_] - Q[state,action])
+            state, action = state_, action_            
         EPS -= 2/(numGames) if EPS > 0 else 0
         totalRewards[i] = epRewards
 
-    plt.plot(totalRewards, 'b--')
-    plt.show()    
+    plotRunningAverage(totalRewards)
