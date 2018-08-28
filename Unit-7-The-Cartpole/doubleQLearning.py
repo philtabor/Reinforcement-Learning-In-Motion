@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import gym
+from util import plotRunningAverage
 
 def maxAction(Q1, Q2, state):    
     values = np.array([Q1[state,a] + Q2[state,a] for a in range(2)])
@@ -43,7 +44,7 @@ if __name__ == '__main__':
             Q1[s, a] = 0
             Q2[s,a] = 0
 
-    numGames = 100000
+    numGames = 50000
     totalRewards = np.zeros(numGames)
     for i in range(numGames):
         if i % 5000 == 0:
@@ -69,5 +70,4 @@ if __name__ == '__main__':
         EPS -= 2/(numGames) if EPS > 0 else 0
         totalRewards[i] = epRewards
     
-    plt.plot(totalRewards, 'b--')
-    plt.show()
+    plotRunningAverage(totalRewards)
