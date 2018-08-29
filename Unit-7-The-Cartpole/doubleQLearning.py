@@ -27,8 +27,8 @@ if __name__ == '__main__':
     env = gym.make('CartPole-v0')
     # model hyperparameters
     ALPHA = 0.1
-    GAMMA = 0.9
-    EPS = 1.0
+    GAMMA = 1.0
+    EPS = 0.1#1.0
 
     #construct state space
     states = []
@@ -39,12 +39,12 @@ if __name__ == '__main__':
                     states.append((i,j,k,l))
     
     Q1, Q2 = {}, {}
-    for s in states:
-        for a in range(2):
-            Q1[s, a] = 0
-            Q2[s,a] = 0
+    for state in states:
+        for action in range(2):
+            Q1[state, action] = 0
+            Q2[state,action] = 0
 
-    numGames = 50000
+    numGames = 100000
     totalRewards = np.zeros(numGames)
     for i in range(numGames):
         if i % 5000 == 0:
@@ -53,21 +53,21 @@ if __name__ == '__main__':
         epRewards = 0
         observation = env.reset()
         while not done:
-            s = getState(observation)
+            state = getState(observation)
             rand = np.random.random()
-            a = maxAction(Q1,Q2,s) if rand < (1-EPS) else env.action_space.sample()
-            observation_, reward, done, info = env.step(a)
+            action = maxAction(Q1,Q2,state) if rand < (1-EPS) else env.action_space.sample()
+            observation_, reward, done, info = env.step(action)
             epRewards += reward
-            s_ = getState(observation_)
+            state_ = getState(observation_)
             rand = np.random.random()
             if rand <= 0.5:
-                a_ = maxAction(Q1,Q1,s)
-                Q1[s,a] = Q1[s,a] + ALPHA*(reward + GAMMA*Q2[s_,a_] - Q1[s,a])
+                action_ = maxAction(Q1,Q1,state_)
+                Q1[state,action] = Q1[state,action] + ALPHA*(reward + GAMMA*Q2[state_,action_] - Q1[state,action])
             elif rand > 0.5:
-                a_ = maxAction(Q2,Q2,s)
-                Q2[s,a] = Q2[s,a] + ALPHA*(reward + GAMMA*Q1[s_,a_] - Q2[s,a])
+                action_ = maxAction(Q2,Q2,state_)
+                Q2[state,action] = Q2[state,action] + ALPHA*(reward + GAMMA*Q1[state_,action_] - Q2[state,action])
             observation = observation_
-        EPS -= 2/(numGames) if EPS > 0 else 0
+        #EPS -= 2/(numGames) if EPS > 0 else 0
         totalRewards[i] = epRewards
     
     plotRunningAverage(totalRewards)
