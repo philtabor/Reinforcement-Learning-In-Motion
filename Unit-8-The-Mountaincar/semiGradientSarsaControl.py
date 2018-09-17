@@ -52,14 +52,14 @@ if __name__ == '__main__':
 
     posBins, velBins = getBins()
     numEpisodes = 500
-    numRuns = 10
+    numRuns = 50
     epLengths = np.zeros((3, numEpisodes, numRuns))
     x = [i for i in range(epLengths.shape[1])]
 
     for k, ALPHA in enumerate([0.01, 0.1, 0.2]):
         for j in range(numRuns):
             model = Model(ALPHA, GAMMA, 8*8*8, 3)
-            EPSILON = 0.1#1.0
+            EPSILON = 1.0
             dt = 1.0
             print('alpha', ALPHA, 'run ', j)
             for i in range(numEpisodes):
@@ -108,7 +108,7 @@ if __name__ == '__main__':
                     action = action_
                     observation = observation_
                     
-                #EPSILON -= 2 / numEpisodes if EPSILON > 0 else 0
+                EPSILON -= 2 / numEpisodes if EPSILON > 0 else 0
                 epLengths[k][i][j] = steps
 
     averaged1 = np.mean(epLengths[0], axis=1)    
