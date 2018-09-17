@@ -2,12 +2,6 @@ import numpy as np
 import gym
 import matplotlib.pyplot as plt 
 
-def sampleReducedActionSpace(actionSpace, action):
-    actions = actionSpace[:]
-    actions.remove(action)
-    sample = np.random.choice(actions)
-    return sample   
-
 if __name__ == '__main__':
     env = gym.make('FrozenLake-v0')
     GAMMA = 0.9
@@ -39,7 +33,7 @@ if __name__ == '__main__':
             observation_, reward, done, info = env.step(action)
             memory.append((observation, action, reward))
             observation = observation_
-            
+
         memory.append((observation, action, reward))
         G = 0        
         last = True # start at t = T - 1
@@ -63,8 +57,7 @@ if __name__ == '__main__':
                 rand = np.random.random()
                 if rand < 1 - EPS:
                     policy[state] = possibleActions[best]
-                else:
-                    action = sampleReducedActionSpace(possibleActions, possibleActions[best])
+                else:                    
                     policy[state] = np.random.choice(possibleActions)
     numGames = 1000
     rewards = np.zeros(numGames)
