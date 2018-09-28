@@ -108,7 +108,10 @@ if __name__ == '__main__':
                     action = action_
                     observation = observation_
                     
-                EPSILON -= 2 / numEpisodes if EPSILON > 0 else 0
+                if EPSILON - 2 / numEpisodes > 0:
+                    EPSILON -= 2 / numEpisodes
+                else:
+                    EPSILON = 0
                 epLengths[k][i][j] = steps
 
     averaged1 = np.mean(epLengths[0], axis=1)    
