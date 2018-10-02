@@ -60,7 +60,10 @@ if __name__ == '__main__':
             action_ = maxAction(Q,state_)
             Q[state,action] = Q[state,action] + ALPHA*(reward + GAMMA*Q[state_,action_] - Q[state,action])
             observation = observation_
-        EPS -= 2/(numGames) if EPS > 0 else 0
-        totalRewards[i] = epRewards     
-    
+        if EPS - 2 / numGames > 0:
+            EPS -= 2 / numGames
+        else:
+            EPS = 0
+        totalRewards[i] = epRewards         
+
     plotRunningAverage(totalRewards)
