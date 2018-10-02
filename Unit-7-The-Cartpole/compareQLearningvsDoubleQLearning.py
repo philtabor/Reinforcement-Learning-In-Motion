@@ -34,7 +34,7 @@ if __name__ == '__main__':
     # model hyperparameters
     ALPHA = 0.1
     GAMMA = 1.0  
-    EPS = 0.1#1.0
+    EPS = 0.1
 
     #construct state space
     states = []
@@ -99,7 +99,6 @@ if __name__ == '__main__':
                 action_ = maxAction(Q2,state_)
                 Q2[state,action] = Q2[state,action] + ALPHA*(reward + GAMMA*Q1[state_,action_] - Q2[state,action])
             observation = observation_
-        totalRewardsDQ[i] = epRewards
-        #EPS -= 2 / numGames if EPS > 0 else 0        
+        totalRewardsDQ[i] = epRewards    
     labels=['Q Learning', 'Double Q Learning']
     plotRunningAverageComparison(totalRewardsQLearning, totalRewardsDQ, labels)
