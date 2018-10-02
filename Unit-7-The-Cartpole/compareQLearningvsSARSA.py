@@ -29,7 +29,7 @@ if __name__ == '__main__':
     # model hyperparameters
     ALPHA = 0.1
     GAMMA = 1.0  
-    EPS = 0.1
+    EPS = 1.0#0.1
 
     #construct state space
     states = []
@@ -61,14 +61,19 @@ if __name__ == '__main__':
             state_ = getState(observation_)
             action_ = maxAction(Q,state_)
             Q[state,action] = Q[state,action] + ALPHA*(reward + GAMMA*Q[state_,action_] - Q[state,action])
-            observation = observation_        
+            observation = observation_ 
+        if EPS - 2 / numGames > 0:
+            EPS -= 2 / numGames
+        else:
+            EPS = 0      
         totalRewardsQLearning[i] = epRewards
     
     Q = {}
     for state in states:
         for action in range(2):
             Q[state, action] = 0
-
+    
+    EPS = 1.0
     totalRewardsSARSA = np.zeros(numGames)
     for i in range(numGames):
         if i % 5000 == 0:
@@ -87,7 +92,11 @@ if __name__ == '__main__':
             action_ = maxAction(Q, state_) if rand < (1-EPS) else env.action_space.sample()
             epRewards += reward
             Q[state,action] = Q[state,action] + ALPHA*(reward + GAMMA*Q[state_,action_] - Q[state,action])
-            state, action = state_, action_            
-        totalRewardsSARSA[i] = epRewards    
+            state, action = state_, action_ 
+        if EPS - 2 / numGames > 0:
+            EPS -= 2 / numGames
+        else:
+            EPS = 0
+        totalRewardsSARSA[i] = epRewards 
     labels=['Q Learning', 'SARSA']
     plotRunningAverageComparison(totalRewardsQLearning, totalRewardsSARSA, labels)
