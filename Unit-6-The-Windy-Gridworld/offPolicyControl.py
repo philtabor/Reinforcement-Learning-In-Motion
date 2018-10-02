@@ -5,7 +5,7 @@ import numpy as np
 if __name__ == '__main__':
     grid = WindyGrid(6,6, wind=[0, 0, 1, 2, 1, 0])
     GAMMA = 0.9
-    EPS = 0.1
+    EPS = 0.4
 
     Q = {}
     C = {}
@@ -19,8 +19,8 @@ if __name__ == '__main__':
         vals = np.array([Q[state, a] for a in grid.possibleActions])
         argmax = np.argmax(vals)
         targetPolicy[state] = grid.possibleActions[argmax]
-
-    for i in range(3000000):
+    numGames = 4000000
+    for i in range(numGames):
         if i % 100000 == 0:
             print('starting episode', i)                      
         behaviorPolicy = {}
@@ -42,8 +42,8 @@ if __name__ == '__main__':
                 reward = -steps                                   
             memory.append((observation, action, reward))
             observation = observation_
-
         memory.append((observation, action, reward))
+
         G = 0
         W = 1
         last = True
