@@ -66,8 +66,7 @@ if __name__ == '__main__':
             state_ = getState(observation_)
             action_ = maxAction(Q,state_)
             Q[state,action] = Q[state,action] + ALPHA*(reward + GAMMA*Q[state_,action_] - Q[state,action])
-            observation = observation_ 
-        #EPS -= 2 / numGames if EPS > 0 else 0     
+            observation = observation_  
         totalRewardsQLearning[i] = epRewards
    
     
@@ -76,7 +75,6 @@ if __name__ == '__main__':
         for action in range(2):
             Q1[state,action] = 0
             Q2[state,action] = 0
-    #EPS = 1.0
     totalRewardsDQ = np.zeros(numGames)
     for i in range(numGames):
         if i % 5000 == 0:
