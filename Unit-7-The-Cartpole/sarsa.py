@@ -1,6 +1,7 @@
 import numpy as np
 from util import plotRunningAverage
 import gym
+from gym import wrappers
 
 def maxAction(Q, state):    
     values = np.array([Q[state,a] for a in range(2)])
@@ -62,7 +63,9 @@ if __name__ == '__main__':
             action_ = maxAction(Q, state_) if rand < (1-EPS) else env.action_space.sample()            
             Q[state,action] = Q[state,action] + ALPHA*(reward + GAMMA*Q[state_,action_] - Q[state,action])
             state, action = state_, action_            
-        EPS -= 2/(numGames) if EPS > 0 else 0
+        if EPS - 2 / numGames > 0:
+            EPS -= 2 / numGames
+        else:
+            EPS = 0
         totalRewards[i] = epRewards
-
     plotRunningAverage(totalRewards)
