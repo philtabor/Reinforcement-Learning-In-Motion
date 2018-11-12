@@ -16,6 +16,8 @@ if __name__ == '__main__':
             maze.updateMaze(action)
             state, reward = maze.getStateAndReward()
             robot.updateStateHistory(state, reward)
+            if maze.steps > 1000:
+                maze.robotPosition = (5,5)
         robot.learn()
         moveHistory.append(maze.steps)
         maze = Maze()
@@ -32,10 +34,16 @@ if __name__ == '__main__':
             maze.updateMaze(action)
             state, reward = maze.getStateAndReward()
             robot.updateStateHistory(state, reward)
+            if maze.steps > 1000:
+                maze.robotPosition = (5,5)            
         robot.learn()
         moveHistory2.append(maze.steps)
         maze = Maze()
-    plt.semilogy(moveHistory, 'b--', moveHistory2, 'r--')
-    plt.legend(['alpha=0.1','alpha=0.99'])
-    plt.show()
 
+    plt.subplot(211)
+    plt.semilogy(moveHistory, 'b--')
+    plt.legend(['alpha=0.1'])
+    plt.subplot(212)
+    plt.semilogy(moveHistory2, 'r--')
+    plt.legend(['alpha=0.99'])
+    plt.show()
