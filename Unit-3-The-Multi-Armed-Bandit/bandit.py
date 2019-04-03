@@ -17,24 +17,24 @@ class Bandit(object):
             whichArm = np.random.choice(self.numArms)
         elif rand > self.epsilon:
             a = np.array([approx for approx in self.Q])
-            whichArm = np.random.choice(np.where(a == a.max())[0])            
+            whichArm = np.random.choice(np.where(a == a.max())[0])
         self.lastAction = whichArm
 
         return np.random.randn() + self.trueRewards[whichArm]
-    
+
     def updateMean(self, sample):
         whichArm = self.lastAction
         self.N[whichArm] += 1
-        self.Q[whichArm] = self.Q[whichArm] + 1.0/self.N[whichArm]*(sample - self.Q[whichArm])                
+        self.Q[whichArm] = self.Q[whichArm] + 1.0/self.N[whichArm]*(sample - self.Q[whichArm])
 
-def simulate(numArms, epsilon, numPulls):    
-    rewardHistory = np.zeros(numPulls)    
+def simulate(numArms, epsilon, numPulls):
+    rewardHistory = np.zeros(numPulls)
     for j in range(2000):
-        rewards = [np.random.randn() for _ in range(numActions)]
+        rewards = [np.random.randn() for _ in range(numArms)]
         bandit = Bandit(numArms, rewards, epsilon)
         if j % 200 == 0:
             print(j)
-        for i in range(numPulls):        
+        for i in range(numPulls):
             reward = bandit.pull()
             bandit.updateMean(reward)
 
